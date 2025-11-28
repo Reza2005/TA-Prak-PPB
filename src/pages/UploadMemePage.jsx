@@ -1,61 +1,71 @@
-// src/pages/UploadMemePage.jsx
-
 import React, { useState } from 'react';
-import axios from 'axios'; // Menggunakan Axios (walaupun Supabase SDK bisa melakukannya)
-import { supabase } from '../config/supabaseClient'; // Import klien Supabase
+import { supabase } from '../config/supabaseClient'; 
+import { Upload } from 'lucide-react'; 
 
-// Ganti dengan nama bucket Anda
 const BUCKET_NAME = 'meme-bucket'; 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
-function UploadMemePage() {
+function UploadMemePage({ setCurrentPage }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [file, setFile] = useState(null);
-  const [statusMessage, setStatusMessage] = useState('');
+  const [statusMessage, setStatusMessage] = useState({ text: '', type: '' });
   const [isLoading, setIsLoading] = useState(false);
 
+  const displayMessage = (text, type = 'info') => {
+    setStatusMessage({ text, type });
+    if (type !== 'error') {
+      setTimeout(() => setStatusMessage({ text: '', type: '' }), 4000);
+    }
+  };
+
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+    if (selectedFile && selectedFile.size > MAX_FILE_SIZE) {
+      displayMessage(`Ukuran file terlalu besar. Maksimal ${MAX_FILE_SIZE / 1024 / 1024}MB.`, 'error');
+      setFile(null);
+      e.target.value = null; // Reset input file
+    } else {
+      setFile(selectedFile);
+      setStatusMessage({ text: '', type: '' });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file) {
-      setStatusMessage('❌ Harap pilih file gambar.');
+      displayMessage('❌ Harap pilih file gambar untuk diunggah.', 'error');
       return;
     }
 
     setIsLoading(true);
-    setStatusMessage('🚀 Mengunggah file dan menyimpan metadata...');
+    displayMessage('🚀 Mengunggah file ke Supabase Storage...', 'info');
     
-    // 1. Tentukan path unik untuk file di Storage
-    const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`; // Pastikan nama file aman
-    const filePath = `public/${fileName}`; // Path di dalam bucket
+    const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`; 
+    const filePath = `public/${fileName}`; 
 
     try {
-      // 2. Unggah file ke Supabase Storage
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      // 1. Unggah file
+      const { error: uploadError } = await supabase.storage
         .from(BUCKET_NAME)
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false // Jangan timpa jika nama sama
-        });
+        .upload(filePath, file);
         
       if (uploadError) throw uploadError;
 
-      // 3. Ambil URL Publik dari file yang baru diunggah
+      // 2. Ambil URL Publik
       const { data: publicUrlData } = supabase.storage
         .from(BUCKET_NAME)
         .getPublicUrl(filePath);
 
       const imageUrl = publicUrlData.publicUrl;
       
-      // 4. Simpan metadata (termasuk URL) ke Supabase Database (Tabel 'memes')
+      // 3. Simpan metadata
+      displayMessage('💾 Menyimpan metadata ke Supabase Database...', 'info');
       const { error: dbError } = await supabase
-        .from('memes') // Nama tabel di Supabase
+        .from('memes') 
         .insert([
           { 
-            title: title, 
+            title: title || 'Meme Tanpa Judul', 
             description: description, 
             image_url: imageUrl 
           },
@@ -63,75 +73,92 @@ function UploadMemePage() {
 
       if (dbError) throw dbError;
 
-      setStatusMessage('✅ Sukses! Meme berhasil diunggah dan disimpan di database.');
+      displayMessage('✅ Sukses! Meme berhasil diunggah dan disimpan.', 'success');
       
       // Reset form
       setTitle('');
       setDescription('');
       setFile(null);
       document.getElementById('file-input').value = null; 
+      
+      // Kembali ke galeri setelah sukses
+      setTimeout(() => setCurrentPage('gallery'), 1500);
 
     } catch (error) {
       console.error('Error saat upload atau simpan data:', error);
-      setStatusMessage(`❌ Gagal menyimpan meme: ${error.message || 'Error tidak diketahui'}`);
+      displayMessage(`❌ Gagal: ${error.message || 'Periksa koneksi Supabase Anda'}`, 'error');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const messageClasses = {
+    info: 'bg-blue-100 text-blue-700 border-blue-400',
+    success: 'bg-green-100 text-green-700 border-green-400',
+    error: 'bg-red-100 text-red-700 border-red-400',
+  };
+
   return (
-    <div className="p-8 max-w-lg mx-auto bg-white shadow-xl rounded-lg">
-      <h2 className="text-2xl font-bold mb-6 text-center">Upload Meme Supabase</h2>
+    <div className="p-8 max-w-lg mx-auto bg-white shadow-2xl rounded-xl mt-8">
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Upload Meme Baru</h2>
       
-      {statusMessage && (
-        <p className={`p-3 mb-4 rounded ${statusMessage.includes('Sukses') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-          {statusMessage}
+      {statusMessage.text && (
+        <p className={`p-4 mb-4 rounded-lg border text-sm font-medium ${messageClasses[statusMessage.type]}`}>
+          {statusMessage.text}
         </p>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">Judul Meme</label>
+          <label htmlFor="title" className="block text-sm font-semibold text-gray-700">Judul Meme</label>
           <input
             id="title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
         
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">Deskripsi (Opsional)</label>
+          <label htmlFor="description" className="block text-sm font-semibold text-gray-700">Deskripsi (Maks. 5MB)</label>
           <textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 h-24"
           />
         </div>
 
         <div>
-          <label htmlFor="file-input" className="block text-sm font-medium text-gray-700">File Gambar (.jpg, .png, .gif)</label>
+          <label htmlFor="file-input" className="block text-sm font-semibold text-gray-700 mb-2">Pilih File Gambar</label>
           <input
             id="file-input"
             type="file"
             accept="image/jpeg,image/png,image/gif"
             onChange={handleFileChange}
             required
-            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
           />
+          {file && <p className="text-xs text-gray-500 mt-1">File terpilih: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)</p>}
         </div>
 
         <button 
           type="submit" 
-          disabled={isLoading || !file} 
-          className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+          disabled={isLoading || !file || statusMessage.type === 'error'} 
+          className="w-full py-3 px-4 border border-transparent rounded-lg shadow-lg text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 flex items-center justify-center transition duration-150"
         >
-          {isLoading ? 'Mengunggah...' : 'Upload Meme via Supabase'}
+          <Upload size={20} className={`mr-2 ${isLoading ? 'animate-bounce' : ''}`} />
+          {isLoading ? 'Mengunggah...' : 'Upload Meme'}
         </button>
       </form>
+      
+      <button 
+        onClick={() => setCurrentPage('gallery')} 
+        className="mt-4 w-full py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200"
+      >
+        Kembali ke Galeri
+      </button>
     </div>
   );
 }
