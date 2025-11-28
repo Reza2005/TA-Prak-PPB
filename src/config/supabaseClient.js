@@ -11,8 +11,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
   // Jika kunci tidak ada, beri peringatan keras
   console.error("⚠️ Peringatan Kritis: Supabase URL atau Anon Key (VITE_SUPABASE_...) tidak ditemukan di file .env Anda. Aplikasi mungkin tidak berfungsi.");
   
-  const tempUrl = "http://localhost:54321";
-  const tempKey = "anon_key_placeholder";
+  const tempUrl = "https://oyawuswcalhsfdiqenqc.supabase.co";
+  const tempKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95YXd1c3djYWxoc2ZkaXFlbnFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDM0MDQzOSwiZXhwIjoyMDc5OTE2NDM5fQ._P94ftmPGGs5R2zuBed9BEf_0wCmh89NeK7EKkF-8sE";
   
   if (typeof window !== 'undefined') {
     // Kami sarankan menggunakan alert hanya untuk memberitahu pengguna di Canvas.

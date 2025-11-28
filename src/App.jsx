@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from '../config/supabaseClient';
+import { supabase } from './config/supabaseClient';
 import { GalleryHorizontal, Save } from 'lucide-react';
 
 function EditMemePage({ memeToEdit, setCurrentPage, onUpdateSuccess }) {
