@@ -5,7 +5,30 @@ import PWABadge from './PWABadge.jsx'
 import './App.css'
 
 function App() {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
   const [count, setCount] = useState(0)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await fetch('http://localhost:5000/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email }),
+      })
+      if (response.ok) {
+        alert('User saved successfully!')
+        setName('')
+        setEmail('')
+      } else {
+        alert('Failed to save user.')
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('An error occurred while saving the user.')
+    }
+  }
 
   return (
     <>
@@ -26,6 +49,23 @@ function App() {
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
       </div>
+      <form onSubmit={handleSubmit} className="form">
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <button type="submit">Save</button>
+      </form>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
