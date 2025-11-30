@@ -61,22 +61,21 @@ function MemeGalleryPage({ setCurrentPage, onEdit }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen cream-theme">
       {" "}
       {/* Background abu-abu muda */}
       {/* Header/Navbar Tetap (Sticky) */}
-      <header className="bg-white shadow-md sticky top-0 z-20">
+      <header className="header-gradient sticky top-0 z-20">
         <div className="p-4 max-w-4xl mx-auto flex justify-between items-center">
-          <h2 className="text-2xl font-extrabold text-gray-900 flex items-center">
-            <GalleryHorizontal className="mr-2 text-indigo-600" size={24} />{" "}
-            Meme Collection
+          <h2 className="text-2xl font-extrabold text-white flex items-center">
+            <GalleryHorizontal className="mr-2 text-white" size={24} /> Meme Collection
           </h2>
           <div className="flex space-x-3">
             {/* Tombol Muat Ulang */}
             <button
               onClick={loadMemes}
               disabled={isLoading}
-              className="py-2 px-3 border rounded-lg shadow-sm text-sm font-medium bg-indigo-500 text-white hover:bg-indigo-600 disabled:opacity-50 transition duration-150 flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="py-2 px-3 border rounded-lg shadow-sm text-sm font-medium bg-indigo-500 text-white hover:bg-indigo-600 disabled:opacity-50 transition duration-150 flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 btn-primary"
             >
               {isLoading ? (
                 <Loader2 size={16} className="mr-1 animate-spin" />
@@ -88,7 +87,7 @@ function MemeGalleryPage({ setCurrentPage, onEdit }) {
             {/* Tombol Upload */}
             <button
               onClick={() => setCurrentPage("upload")}
-              className="py-2 px-3 border rounded-lg shadow-sm text-sm font-medium bg-teal-500 text-white hover:bg-teal-600 transition duration-150 flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+              className="py-2 px-3 border rounded-lg shadow-sm text-sm font-medium bg-teal-500 text-white hover:bg-teal-600 transition duration-150 flex items-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 btn-accent"
             >
               <Upload size={16} className="mr-1" /> Upload Meme
             </button>
@@ -115,7 +114,7 @@ function MemeGalleryPage({ setCurrentPage, onEdit }) {
               <div
                 key={meme.id}
                 // Efek Hover: naik sedikit (scale), bayangan lebih kuat, dan transisi halus
-                className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col relative group transition-all duration-300 ease-in-out transform hover:scale-[1.03] hover:shadow-2xl hover:border-indigo-400 border border-transparent"
+                className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col relative group transition-all duration-300 ease-in-out transform hover:scale-[1.03] hover:shadow-2xl hover:border-indigo-400 border border-transparent card-accent"
               >
                 {/* Overlay Penghapusan */}
                 {meme.isDeleting && (

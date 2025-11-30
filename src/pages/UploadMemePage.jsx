@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { uploadImage, createMeme } from "../api/memes";
 import { Upload } from "lucide-react";
 
 const BUCKET_NAME = "meme-bucket";
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
 
 function UploadMemePage({ setCurrentPage }) {
   const [title, setTitle] = useState("");
@@ -11,6 +11,7 @@ function UploadMemePage({ setCurrentPage }) {
   const [tags, setTags] = useState("");
   const [category, setCategory] = useState("");
   const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [statusMessage, setStatusMessage] = useState({ text: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,17 +24,39 @@ function UploadMemePage({ setCurrentPage }) {
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.size > MAX_FILE_SIZE) {
+    if (!selectedFile) return;
+
+    // Validate mime-type (must be image/*)
+    if (!selectedFile.type.startsWith("image/")) {
+      displayMessage(
+        "File type not supported. Please choose an image.",
+        "error"
+      );
+      setFile(null);
+      e.target.value = null;
+      return;
+    }
+
+    if (selectedFile.size > MAX_FILE_SIZE) {
       displayMessage(
         `File is too large. Maximum ${MAX_FILE_SIZE / 1024 / 1024}MB.`,
         "error"
       );
       setFile(null);
       e.target.value = null; // Reset input file
-    } else {
-      setFile(selectedFile);
-      setStatusMessage({ text: "", type: "" });
+      return;
     }
+
+    // Revoke previous preview if present
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
+
+    const objUrl = URL.createObjectURL(selectedFile);
+    setPreviewUrl(objUrl);
+    setFile(selectedFile);
+    setStatusMessage({ text: "", type: "" });
   };
 
   const handleSubmit = async (e) => {
@@ -69,6 +92,10 @@ function UploadMemePage({ setCurrentPage }) {
       setTitle("");
       setDescription("");
       setFile(null);
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+        setPreviewUrl(null);
+      }
       document.getElementById("file-input").value = null;
 
       setTimeout(() => setCurrentPage("gallery"), 1500);
@@ -90,7 +117,7 @@ function UploadMemePage({ setCurrentPage }) {
   };
 
   return (
-    <div className="p-8 max-w-lg mx-auto bg-white shadow-2xl rounded-xl mt-8">
+    <div className="p-8 max-w-lg mx-auto cream-theme rounded-xl mt-8 card-accent">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
         Upload New Meme
       </h2>
@@ -185,7 +212,7 @@ function UploadMemePage({ setCurrentPage }) {
           <input
             id="file-input"
             type="file"
-            accept="image/jpeg,image/png,image/gif"
+            accept="image/*"
             onChange={handleFileChange}
             required
             className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
@@ -195,6 +222,16 @@ function UploadMemePage({ setCurrentPage }) {
               Selected file: {file.name} ({(file.size / 1024 / 1024).toFixed(2)}{" "}
               MB)
             </p>
+          )}
+
+          {previewUrl && (
+            <div className="mt-3">
+              <img
+                src={previewUrl}
+                alt="preview"
+                className="w-full max-h-48 object-contain rounded-md border"
+              />
+            </div>
           )}
         </div>
 

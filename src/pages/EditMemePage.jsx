@@ -6,7 +6,9 @@ function EditMemePage({ memeToEdit, setCurrentPage, onUpdateSuccess }) {
   const [title, setTitle] = useState(memeToEdit.title || "");
   const [description, setDescription] = useState(memeToEdit.description || "");
   const [tags, setTags] = useState(
-    Array.isArray(memeToEdit.tags) ? memeToEdit.tags.join(", ") : memeToEdit.tags || ""
+    Array.isArray(memeToEdit.tags)
+      ? memeToEdit.tags.join(", ")
+      : memeToEdit.tags || ""
   );
   const [category, setCategory] = useState(memeToEdit.category || "");
   const [statusMessage, setStatusMessage] = useState("");
@@ -51,7 +53,7 @@ function EditMemePage({ memeToEdit, setCurrentPage, onUpdateSuccess }) {
   };
 
   return (
-    <div className="p-8 max-w-lg mx-auto bg-white shadow-xl rounded-lg">
+    <div className="p-8 max-w-lg mx-auto cream-theme shadow-xl rounded-lg card-accent">
       <h2 className="text-2xl font-bold mb-6 text-center">
         Edit Meme: {memeToEdit.title}
       </h2>
@@ -112,43 +114,43 @@ function EditMemePage({ memeToEdit, setCurrentPage, onUpdateSuccess }) {
           />
         </div>
 
-          <div>
-            <label
-              htmlFor="tags"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Tags (comma separated)
-            </label>
-            <input
-              id="tags"
-              type="text"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
-          </div>
+        <div>
+          <label
+            htmlFor="tags"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Tags (comma separated)
+          </label>
+          <input
+            id="tags"
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+          />
+        </div>
 
-          <div>
-            <label
-              htmlFor="category"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Category
-            </label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            >
-              <option value="">-- None --</option>
-              <option value="Funny">Funny</option>
-              <option value="Dank">Dank</option>
-              <option value="Wholesome">Wholesome</option>
-              <option value="Political">Political</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+        <div>
+          <label
+            htmlFor="category"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Category
+          </label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+          >
+            <option value="">-- None --</option>
+            <option value="Funny">Funny</option>
+            <option value="Dank">Dank</option>
+            <option value="Wholesome">Wholesome</option>
+            <option value="Political">Political</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
 
         <button
           type="submit"

@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function AddMemeModal({ close, add }) {
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState("");
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
 
   const handleSubmit = () => {
     if (!image) return alert("Image is required!");
@@ -21,11 +23,34 @@ export default function AddMemeModal({ close, add }) {
 
   const handleImage = (e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
+    if (!file) return;
 
+    if (!file.type.startsWith("image/")) {
+      return alert("File type not supported. Please choose an image.");
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      return alert(`File too large. Max ${MAX_FILE_SIZE / 1024 / 1024} MB.`);
+    }
+
+    // create preview URL (preserves GIF animation)
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
+    const obj = URL.createObjectURL(file);
+    setPreviewUrl(obj);
+
+    const reader = new FileReader();
     reader.onloadend = () => setImage(reader.result);
     reader.readAsDataURL(file);
   };
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
@@ -65,6 +90,16 @@ export default function AddMemeModal({ close, add }) {
           className="mt-3"
           onChange={handleImage}
         />
+
+        {previewUrl && (
+          <div className="mt-3">
+            <img
+              src={previewUrl}
+              alt="preview"
+              className="w-full max-h-40 object-contain rounded-md border"
+            />
+          </div>
+        )}
 
         <div className="flex justify-end mt-5 gap-3">
           <button onClick={close}>Cancel</button>

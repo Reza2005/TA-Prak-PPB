@@ -1,8 +1,101 @@
 /* src/index.css — import langsung file Tailwind di node_modules */
 @import "tailwindcss/index.css";
 
-/* Optional: custom styling */
+/* Theme variables and small utility classes for more color */
+:root {
+  --brand-50: #eef2ff;
+  --brand-100: #e0e7ff;
+  --brand-300: #a5b4fc;
+  --brand-500: #6366f1; /* indigo-500 */
+  --brand-600: #4f46e5;
+  --accent-50: #ecfeff;
+  --accent-400: #34d399; /* teal-400 */
+  --accent-600: #059669;
+  --muted: #6b7280;
+  --glass: rgba(255,255,255,0.7);
+}
+
 body {
-  background-color: #f3f4f6; /* sama seperti bg-gray-100 */
-  color: #111827; /* gray-900 */
+  background: linear-gradient(180deg, var(--brand-50), #f8fafc 60%);
+  color: #0f172a; /* slate-900 */
+}
+
+/* Header gradient used for sticky headers */
+.header-gradient {
+  background: linear-gradient(90deg, var(--brand-600), #06b6d4 140%);
+  color: white;
+}
+
+/* Primary and secondary button styles to add color accents */
+.btn-primary {
+  background: linear-gradient(90deg, var(--brand-500), var(--brand-600));
+  color: white !important;
+  box-shadow: 0 6px 18px rgba(79,70,229,0.18);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.btn-primary:hover { transform: translateY(-1px); }
+
+.btn-accent {
+  background: linear-gradient(90deg, var(--accent-400), var(--accent-600));
+  color: white !important;
+  box-shadow: 0 6px 18px rgba(6,182,212,0.12);
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--brand-600) !important;
+  border: 1px solid rgba(99,102,241,0.12);
+}
+
+/* Card accent to give important containers colorful borders/shadows */
+.card-accent {
+  border: 1px solid rgba(99,102,241,0.12);
+  box-shadow: 0 8px 30px rgba(99,102,241,0.06);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* Cream / Brown theme (flat colors, simple) */
+:root {
+  --cream-50: #fffaf0;
+  --cream-100: #fff3e0;
+  --brown-500: #8b5e3c;
+  --brown-600: #6b4226;
+  --brown-800: #3b2a22;
+}
+
+.cream-theme {
+  background: var(--cream-50) !important;
+  color: var(--brown-800);
+}
+
+.cream-theme .card-accent {
+  background: var(--cream-100);
+  border-color: rgba(139,94,60,0.12);
+  box-shadow: 0 6px 20px rgba(107,66,38,0.06);
+}
+
+.cream-theme .btn-primary,
+.cream-theme .btn-accent {
+  background: var(--brown-500) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+.cream-theme .btn-secondary {
+  background: white;
+  color: var(--brown-600) !important;
+  border-color: rgba(139,94,60,0.12);
+}
+
+.cream-theme header,
+.cream-theme .header-gradient {
+  background: var(--brown-500) !important;
+  color: white !important;
+}
+
+.cream-theme .muted {
+  color: rgba(59,42,34,0.75);
 }

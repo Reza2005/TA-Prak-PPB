@@ -28,7 +28,9 @@ export default function MemeGrid({ memes }) {
             </div>
 
             <p className="text-sm text-gray-500 truncate mt-1">
-              {Array.isArray(meme.tags) ? meme.tags.join(", ") : meme.tags || ""}
+              {Array.isArray(meme.tags)
+                ? meme.tags.join(", ")
+                : meme.tags || ""}
             </p>
           </div>
         </div>
