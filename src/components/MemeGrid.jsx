@@ -16,13 +16,19 @@ export default function MemeGrid({ memes }) {
             className="w-full h-48 object-cover"
           />
           <div className="p-3">
-            <p className="font-semibold text-gray-900 truncate">
-              {meme.title || "Untitled"}
-            </p>
-            <p className="text-sm text-gray-500 truncate">
-              {Array.isArray(meme.tags)
-                ? meme.tags.join(", ")
-                : meme.tags || ""}
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-semibold text-gray-900 truncate">
+                {meme.title || "Untitled"}
+              </p>
+              {meme.category && (
+                <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-700">
+                  {meme.category}
+                </span>
+              )}
+            </div>
+
+            <p className="text-sm text-gray-500 truncate mt-1">
+              {Array.isArray(meme.tags) ? meme.tags.join(", ") : meme.tags || ""}
             </p>
           </div>
         </div>

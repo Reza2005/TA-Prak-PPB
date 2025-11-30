@@ -51,10 +51,10 @@ export async function uploadImage(file) {
   }
 }
 
-export async function createMeme({ title, description, image_url }) {
+export async function createMeme({ title, description, image_url, category, tags }) {
   const { data, error } = await supabase
     .from("memes")
-    .insert([{ title, description, image_url }]);
+    .insert([{ title, description, image_url, category, tags }]);
 
   if (error) throw error;
   return data;

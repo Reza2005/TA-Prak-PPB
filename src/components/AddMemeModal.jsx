@@ -3,6 +3,7 @@ import { useState } from "react";
 export default function AddMemeModal({ close, add }) {
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState("");
+  const [category, setCategory] = useState("");
   const [image, setImage] = useState("");
 
   const handleSubmit = () => {
@@ -10,7 +11,8 @@ export default function AddMemeModal({ close, add }) {
 
     add({
       title,
-      tags: tags.split(",").map((t) => t.trim()),
+      tags: tags ? tags.split(",").map((t) => t.trim()) : [],
+      category,
       image,
     });
 
@@ -43,6 +45,19 @@ export default function AddMemeModal({ close, add }) {
           className="input mt-3"
           onChange={(e) => setTags(e.target.value)}
         />
+
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="input mt-3"
+        >
+          <option value="">Select category (optional)</option>
+          <option value="Funny">Funny</option>
+          <option value="Dank">Dank</option>
+          <option value="Wholesome">Wholesome</option>
+          <option value="Political">Political</option>
+          <option value="Other">Other</option>
+        </select>
 
         <input
           type="file"

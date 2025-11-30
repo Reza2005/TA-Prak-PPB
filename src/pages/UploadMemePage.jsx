@@ -8,6 +8,8 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 function UploadMemePage({ setCurrentPage }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [tags, setTags] = useState("");
+  const [category, setCategory] = useState("");
   const [file, setFile] = useState(null);
   const [statusMessage, setStatusMessage] = useState({ text: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +59,8 @@ function UploadMemePage({ setCurrentPage }) {
         title: title || "Untitled Meme",
         description,
         image_url: imageUrl,
+        category: category || null,
+        tags: tags ? tags.split(",").map((t) => t.trim()) : [],
       });
 
       displayMessage("✅ Success! Meme uploaded and saved.", "success");
@@ -131,6 +135,44 @@ function UploadMemePage({ setCurrentPage }) {
             onChange={(e) => setDescription(e.target.value)}
             className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 h-24"
           />
+        </div>
+
+        <div>
+          <label
+            htmlFor="tags"
+            className="block text-sm font-semibold text-gray-700"
+          >
+            Tags (comma separated)
+          </label>
+          <input
+            id="tags"
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-3"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="category"
+            className="block text-sm font-semibold text-gray-700"
+          >
+            Category
+          </label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-3"
+          >
+            <option value="">-- None --</option>
+            <option value="Funny">Funny</option>
+            <option value="Dank">Dank</option>
+            <option value="Wholesome">Wholesome</option>
+            <option value="Political">Political</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
 
         <div>
