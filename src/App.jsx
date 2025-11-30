@@ -6,14 +6,21 @@ import UploadMemePage from "./pages/UploadMemePage";
 import EditMemePage from "./pages/EditMemePage";
 import ArchivePage from "./pages/ArchivePage";
 import AboutPage from "./pages/AboutPage";
+import MemeDetailPage from "./pages/MemeDetailPage"; // ← Added this
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [memeToEdit, setMemeToEdit] = useState(null);
+  const [memeToView, setMemeToView] = useState(null); // ← Added this for detail ID
 
   const handleEdit = (meme) => {
     setMemeToEdit(meme);
     setCurrentPage("edit");
+  };
+
+  const handleView = (memeId) => { // ← Added this handler
+    setMemeToView(memeId);
+    setCurrentPage("detail");
   };
 
   const handleUpdateSuccess = () => {
@@ -36,6 +43,7 @@ export default function App() {
           <MemeGalleryPage
             setCurrentPage={setCurrentPage}
             onEdit={handleEdit}
+            onView={handleView} // ← Added this
           />
         )}
 
@@ -57,6 +65,10 @@ export default function App() {
 
         {currentPage === "about" && (
           <AboutPage setCurrentPage={setCurrentPage} />
+        )}
+
+        {currentPage === "detail" && memeToView && ( // ← Added this block
+          <MemeDetailPage memeId={memeToView} setCurrentPage={setCurrentPage} />
         )}
       </main>
     </div>
