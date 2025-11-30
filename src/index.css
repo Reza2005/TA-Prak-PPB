@@ -1,6 +1,8 @@
+/* src/index.css — import langsung file Tailwind di node_modules */
 @import "tailwindcss/index.css";
 
+/* Optional: custom styling */
 body {
-  background-color: #f3f4f6;
-  color: #111827;
+  background-color: #f3f4f6; /* sama seperti bg-gray-100 */
+  color: #111827; /* gray-900 */
 }

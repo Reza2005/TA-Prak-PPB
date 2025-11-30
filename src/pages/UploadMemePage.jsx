@@ -1,116 +1,114 @@
-import React, { useState } from 'react';
-import { supabase } from '../config/supabaseClient'; 
-import { Upload } from 'lucide-react'; 
+import React, { useState } from "react";
+import { uploadImage, createMeme } from "../api/memes";
+import { Upload } from "lucide-react";
 
-const BUCKET_NAME = 'meme-bucket'; 
+const BUCKET_NAME = "meme-bucket";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
 function UploadMemePage({ setCurrentPage }) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
-  const [statusMessage, setStatusMessage] = useState({ text: '', type: '' });
+  const [statusMessage, setStatusMessage] = useState({ text: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
 
-  const displayMessage = (text, type = 'info') => {
+  const displayMessage = (text, type = "info") => {
     setStatusMessage({ text, type });
-    if (type !== 'error') {
-      setTimeout(() => setStatusMessage({ text: '', type: '' }), 4000);
+    if (type !== "error") {
+      setTimeout(() => setStatusMessage({ text: "", type: "" }), 4000);
     }
   };
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile && selectedFile.size > MAX_FILE_SIZE) {
-      displayMessage(`Ukuran file terlalu besar. Maksimal ${MAX_FILE_SIZE / 1024 / 1024}MB.`, 'error');
+      displayMessage(
+        `File is too large. Maximum ${MAX_FILE_SIZE / 1024 / 1024}MB.`,
+        "error"
+      );
       setFile(null);
       e.target.value = null; // Reset input file
     } else {
       setFile(selectedFile);
-      setStatusMessage({ text: '', type: '' });
+      setStatusMessage({ text: "", type: "" });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file) {
-      displayMessage('❌ Harap pilih file gambar untuk diunggah.', 'error');
+      displayMessage("❌ Please choose an image file to upload.", "error");
       return;
     }
 
     setIsLoading(true);
-    displayMessage('🚀 Mengunggah file ke Supabase Storage...', 'info');
-    
-    const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`; 
-    const filePath = `public/${fileName}`; 
+    displayMessage("🚀 Uploading file to Supabase Storage...", "info");
+
+    const fileName = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
+    const filePath = `public/${fileName}`;
 
     try {
-      // 1. Unggah file
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET_NAME)
-        .upload(filePath, file);
-        
-      if (uploadError) throw uploadError;
+      // Upload file and get public url
+      const imageUrl = await uploadImage(file);
 
-      // 2. Ambil URL Publik
-      const { data: publicUrlData } = supabase.storage
-        .from(BUCKET_NAME)
-        .getPublicUrl(filePath);
+      // Save metadata
+      displayMessage("💾 Saving metadata to Supabase Database...", "info");
+      await createMeme({
+        title: title || "Untitled Meme",
+        description,
+        image_url: imageUrl,
+      });
 
-      const imageUrl = publicUrlData.publicUrl;
-      
-      // 3. Simpan metadata
-      displayMessage('💾 Menyimpan metadata ke Supabase Database...', 'info');
-      const { error: dbError } = await supabase
-        .from('memes') 
-        .insert([
-          { 
-            title: title || 'Meme Tanpa Judul', 
-            description: description, 
-            image_url: imageUrl 
-          },
-        ]);
+      displayMessage("✅ Success! Meme uploaded and saved.", "success");
 
-      if (dbError) throw dbError;
-
-      displayMessage('✅ Sukses! Meme berhasil diunggah dan disimpan.', 'success');
-      
       // Reset form
-      setTitle('');
-      setDescription('');
+      setTitle("");
+      setDescription("");
       setFile(null);
-      document.getElementById('file-input').value = null; 
-      
-      // Kembali ke galeri setelah sukses
-      setTimeout(() => setCurrentPage('gallery'), 1500);
+      document.getElementById("file-input").value = null;
 
+      setTimeout(() => setCurrentPage("gallery"), 1500);
     } catch (error) {
-      console.error('Error saat upload atau simpan data:', error);
-      displayMessage(`❌ Gagal: ${error.message || 'Periksa koneksi Supabase Anda'}`, 'error');
+      console.error("Error saat upload atau simpan data:", error);
+      displayMessage(
+        `❌ Failed: ${error.message || "Check your Supabase connection"}`,
+        "error"
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   const messageClasses = {
-    info: 'bg-blue-100 text-blue-700 border-blue-400',
-    success: 'bg-green-100 text-green-700 border-green-400',
-    error: 'bg-red-100 text-red-700 border-red-400',
+    info: "bg-blue-100 text-blue-700 border-blue-400",
+    success: "bg-green-100 text-green-700 border-green-400",
+    error: "bg-red-100 text-red-700 border-red-400",
   };
 
   return (
     <div className="p-8 max-w-lg mx-auto bg-white shadow-2xl rounded-xl mt-8">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Upload Meme Baru</h2>
-      
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+        Upload New Meme
+      </h2>
+
       {statusMessage.text && (
-        <p className={`p-4 mb-4 rounded-lg border text-sm font-medium ${messageClasses[statusMessage.type]}`}>
+        <p
+          className={`p-4 mb-4 rounded-lg border text-sm font-medium ${
+            messageClasses[statusMessage.type]
+          }`}
+        >
           {statusMessage.text}
         </p>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label htmlFor="title" className="block text-sm font-semibold text-gray-700">Judul Meme</label>
+          <label
+            htmlFor="title"
+            className="block text-sm font-semibold text-gray-700"
+          >
+            Meme Title
+          </label>
           <input
             id="title"
             type="text"
@@ -119,9 +117,14 @@ function UploadMemePage({ setCurrentPage }) {
             className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-        
+
         <div>
-          <label htmlFor="description" className="block text-sm font-semibold text-gray-700">Deskripsi (Maks. 5MB)</label>
+          <label
+            htmlFor="description"
+            className="block text-sm font-semibold text-gray-700"
+          >
+            Description
+          </label>
           <textarea
             id="description"
             value={description}
@@ -131,7 +134,12 @@ function UploadMemePage({ setCurrentPage }) {
         </div>
 
         <div>
-          <label htmlFor="file-input" className="block text-sm font-semibold text-gray-700 mb-2">Pilih File Gambar</label>
+          <label
+            htmlFor="file-input"
+            className="block text-sm font-semibold text-gray-700 mb-2"
+          >
+            Choose Image File
+          </label>
           <input
             id="file-input"
             type="file"
@@ -140,24 +148,32 @@ function UploadMemePage({ setCurrentPage }) {
             required
             className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
           />
-          {file && <p className="text-xs text-gray-500 mt-1">File terpilih: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)</p>}
+          {file && (
+            <p className="text-xs text-gray-500 mt-1">
+              Selected file: {file.name} ({(file.size / 1024 / 1024).toFixed(2)}{" "}
+              MB)
+            </p>
+          )}
         </div>
 
-        <button 
-          type="submit" 
-          disabled={isLoading || !file || statusMessage.type === 'error'} 
+        <button
+          type="submit"
+          disabled={isLoading || !file || statusMessage.type === "error"}
           className="w-full py-3 px-4 border border-transparent rounded-lg shadow-lg text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 flex items-center justify-center transition duration-150"
         >
-          <Upload size={20} className={`mr-2 ${isLoading ? 'animate-bounce' : ''}`} />
-          {isLoading ? 'Mengunggah...' : 'Upload Meme'}
+          <Upload
+            size={20}
+            className={`mr-2 ${isLoading ? "animate-bounce" : ""}`}
+          />
+          {isLoading ? "Uploading..." : "Upload Meme"}
         </button>
       </form>
-      
-      <button 
-        onClick={() => setCurrentPage('gallery')} 
+
+      <button
+        onClick={() => setCurrentPage("gallery")}
         className="mt-4 w-full py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200"
       >
-        Kembali ke Galeri
+        Back to Gallery
       </button>
     </div>
   );
