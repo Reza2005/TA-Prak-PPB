@@ -6,19 +6,20 @@ import UploadMemePage from "./pages/UploadMemePage";
 import EditMemePage from "./pages/EditMemePage";
 import ArchivePage from "./pages/ArchivePage";
 import AboutPage from "./pages/AboutPage";
-import MemeDetailPage from "./pages/MemeDetailPage"; // ← Added this
+import MemeDetailPage from "./pages/MemeDetailPage";
+import BottomNav from "./components/BottomNav"; // ← Added this
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [memeToEdit, setMemeToEdit] = useState(null);
-  const [memeToView, setMemeToView] = useState(null); // ← Added this for detail ID
+  const [memeToView, setMemeToView] = useState(null);
 
   const handleEdit = (meme) => {
     setMemeToEdit(meme);
     setCurrentPage("edit");
   };
 
-  const handleView = (memeId) => { // ← Added this handler
+  const handleView = (memeId) => {
     setMemeToView(memeId);
     setCurrentPage("detail");
   };
@@ -31,26 +32,22 @@ export default function App() {
   return (
     <div className="min-h-screen">
       <Navbar setCurrentPage={setCurrentPage} currentPage={currentPage} />
-
-      <main className="pt-20">
+      <main className="md:pt-20 pt-0 pb-16 md:pb-0"> {/* ← Added pb-16 for mobile padding */}
         {currentPage === "home" && (
           <div>
             <Hero setCurrentPage={setCurrentPage} />
           </div>
         )}
-
         {currentPage === "gallery" && (
           <MemeGalleryPage
             setCurrentPage={setCurrentPage}
             onEdit={handleEdit}
-            onView={handleView} // ← Added this
+            onView={handleView}
           />
         )}
-
         {currentPage === "upload" && (
           <UploadMemePage setCurrentPage={setCurrentPage} />
         )}
-
         {currentPage === "edit" && memeToEdit && (
           <EditMemePage
             memeToEdit={memeToEdit}
@@ -58,19 +55,17 @@ export default function App() {
             onUpdateSuccess={handleUpdateSuccess}
           />
         )}
-
         {currentPage === "archive" && (
           <ArchivePage setCurrentPage={setCurrentPage} />
         )}
-
         {currentPage === "about" && (
           <AboutPage setCurrentPage={setCurrentPage} />
         )}
-
-        {currentPage === "detail" && memeToView && ( // ← Added this block
+        {currentPage === "detail" && memeToView && (
           <MemeDetailPage memeId={memeToView} setCurrentPage={setCurrentPage} />
         )}
       </main>
+      <BottomNav currentPage={currentPage} setCurrentPage={setCurrentPage} /> {/* ← Added this */}
     </div>
   );
 }

@@ -11,7 +11,7 @@ export default function Navbar({ setCurrentPage, currentPage }) {
     }`;
 
   return (
-    <nav className="w-full bg-white shadow-sm px-4 md:px-10 py-3 fixed top-0 z-40">
+    <nav className="hidden md:block w-full bg-white shadow-sm px-4 md:px-10 py-3 fixed top-0 z-40"> {/* ← Added hidden md:block */}
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-blue-500 rounded-lg flex-shrink-0" />
@@ -19,7 +19,6 @@ export default function Navbar({ setCurrentPage, currentPage }) {
             Meme <span className="text-blue-500">Archive</span>
           </h1>
         </div>
-
         <div className="hidden md:flex items-center gap-6">
           <button
             type="button"
@@ -50,7 +49,6 @@ export default function Navbar({ setCurrentPage, currentPage }) {
             Profile
           </button>
         </div>
-
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -59,7 +57,6 @@ export default function Navbar({ setCurrentPage, currentPage }) {
           >
             + Add Meme
           </button>
-
           <button
             className="md:hidden p-2 rounded text-gray-700 hover:bg-gray-100"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -87,7 +84,6 @@ export default function Navbar({ setCurrentPage, currentPage }) {
           </button>
         </div>
       </div>
-
       {/* Mobile menu */}
       <div className={`md:hidden ${mobileOpen ? "block" : "hidden"} border-t`}>
         <div className="px-4 py-3 space-y-2 bg-white">
