@@ -40,7 +40,7 @@ export default function Navbar({ setCurrentPage, currentPage }) {
             onClick={() => setCurrentPage("archive")}
             className={linkClass("archive")}
           >
-            Categories
+            Archive
           </button>
           <button
             type="button"
@@ -116,7 +116,7 @@ export default function Navbar({ setCurrentPage, currentPage }) {
               setMobileOpen(false);
             }}
           >
-            Categories
+            Archive
           </button>
           <button
             className={linkClass("about")}
