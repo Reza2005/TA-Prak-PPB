@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetchMemes } from "../api/memes";
 import MemeGrid from "../components/MemeGrid";
 
-export default function ArchivePage({ setCurrentPage }) {
+export default function ArchivePage({ setCurrentPage, onView }) {
   const [allMemes, setAllMemes] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -69,7 +69,7 @@ export default function ArchivePage({ setCurrentPage }) {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow card-accent">
-        <MemeGrid memes={filtered} />
+        <MemeGrid memes={filtered} onView={onView} />
       </div>
 
       <div className="mt-6 flex gap-3">
@@ -78,7 +78,7 @@ export default function ArchivePage({ setCurrentPage }) {
           onClick={() => setCurrentPage("gallery")}
           className="inline-block px-4 py-2 btn-secondary rounded-lg border hover:bg-gray-50"
         >
-          Kembali ke Galeri
+          Back to Gallery
         </button>
         <div className="text-sm text-gray-500 self-center">
           Showing {filtered.length} memes

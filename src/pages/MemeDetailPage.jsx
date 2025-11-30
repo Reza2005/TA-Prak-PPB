@@ -44,24 +44,31 @@ export default function MemeDetailPage({ memeId, setCurrentPage }) {
     );
   }
 
+  // Helper to ensure we always work with an array
+  const tagsArray = Array.isArray(meme.tags) 
+    ? meme.tags 
+    : (meme.tags ? meme.tags.split(",") : []);
+
   return (
     <>
       <Navbar setCurrentPage={setCurrentPage} currentPage="detail" />
 
       <div className="pt-20 max-w-4xl mx-auto px-4 pb-12">
         <button
-          onClick={() => setCurrentPage("gallery")}
+          onClick={() => setCurrentPage("archive")}
           className="mb-6 text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2"
         >
-          Back to Gallery
+          &larr; Back to Archive
         </button>
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <img
-            src={meme.image || meme.image_url}
-            alt={meme.title}
-            className="w-full max-h-[80vh] object-contain bg-black"
-          />
+          <div className="w-full bg-black flex justify-center">
+             <img
+              src={meme.image || meme.image_url}
+              alt={meme.title}
+              className="max-w-full max-h-[80vh] object-contain"
+            />
+          </div>
 
           <div className="p-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-3">
@@ -78,9 +85,11 @@ export default function MemeDetailPage({ memeId, setCurrentPage }) {
                   {meme.category}
                 </span>
               )}
-              {meme.tags && (
+              
+              {/* FIXED SECTION: Uses tagsArray safe check */}
+              {tagsArray.length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  {meme.tags.split(",").map((tag, i) => (
+                  {tagsArray.map((tag, i) => (
                     <span
                       key={i}
                       className="bg-gray-100 px-3 py-1 rounded-full"

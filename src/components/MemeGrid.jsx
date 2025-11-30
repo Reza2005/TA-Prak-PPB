@@ -1,4 +1,4 @@
-export default function MemeGrid({ memes }) {
+export default function MemeGrid({ memes, onView }) {
   if (!memes || memes.length === 0) {
     return <p className="text-gray-500">No memes yet — add one!</p>;
   }
@@ -8,7 +8,10 @@ export default function MemeGrid({ memes }) {
       {memes.map((meme, i) => (
         <div
           key={meme.id || i}
-          className="bg-white shadow rounded-xl overflow-hidden hover:scale-[1.02] transition-transform"
+          onClick={() => onView && onView(meme.id)}
+          className={`bg-white shadow rounded-xl overflow-hidden hover:scale-[1.02] transition-transform ${
+            onView ? "cursor-pointer hover:shadow-xl" : ""
+          }`}
         >
           <img
             src={meme.image || meme.image_url || meme.imageUrl}

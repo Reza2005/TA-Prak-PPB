@@ -7,7 +7,7 @@ import EditMemePage from "./pages/EditMemePage";
 import ArchivePage from "./pages/ArchivePage";
 import AboutPage from "./pages/AboutPage";
 import MemeDetailPage from "./pages/MemeDetailPage";
-import BottomNav from "./components/BottomNav"; // ← Added this
+import BottomNav from "./components/BottomNav"; 
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -32,7 +32,7 @@ export default function App() {
   return (
     <div className="min-h-screen">
       <Navbar setCurrentPage={setCurrentPage} currentPage={currentPage} />
-      <main className="md:pt-20 pt-0 pb-16 md:pb-0"> {/* ← Added pb-16 for mobile padding */}
+      <main className="md:pt-20 pt-0 pb-16 md:pb-0">
         {currentPage === "home" && (
           <div>
             <Hero setCurrentPage={setCurrentPage} />
@@ -56,7 +56,10 @@ export default function App() {
           />
         )}
         {currentPage === "archive" && (
-          <ArchivePage setCurrentPage={setCurrentPage} />
+          <ArchivePage 
+            setCurrentPage={setCurrentPage} 
+            onView={handleView} 
+          />
         )}
         {currentPage === "about" && (
           <AboutPage setCurrentPage={setCurrentPage} />
@@ -65,7 +68,7 @@ export default function App() {
           <MemeDetailPage memeId={memeToView} setCurrentPage={setCurrentPage} />
         )}
       </main>
-      <BottomNav currentPage={currentPage} setCurrentPage={setCurrentPage} /> {/* ← Added this */}
+      <BottomNav currentPage={currentPage} setCurrentPage={setCurrentPage} />
     </div>
   );
 }
