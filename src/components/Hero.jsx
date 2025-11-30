@@ -17,7 +17,7 @@ export default function Hero({ setCurrentPage }) {
 
         <div className="mt-6 flex flex-wrap gap-3 justify-center">
           <button
-            onClick={() => setCurrentPage("gallery")}
+            onClick={() => setCurrentPage("archive")}
             className="px-5 py-3 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"
           >
             Browse Memes →
