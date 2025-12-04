@@ -1,4 +1,3 @@
-// vite.config.js
 import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
@@ -12,14 +11,13 @@ export default defineConfig({
       devOptions: {
         enabled: true
       },
-      // 1. Point to the new simple filename
+      // Ensure 'logo.png' exists in your public folder
       includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'logo.png'],
       manifest: {
         name: 'Meme Archive',
         short_name: 'MemeArchive',
         description: 'Aplikasi sederhana untuk mengarsipkan meme favorit.',
         theme_color: '#ffffff',
-        // 2. Update icons to use logo.png
         icons: [
           {
             src: 'logo.png',
