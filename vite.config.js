@@ -3,11 +3,8 @@ import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  // Base path relative for generic hosting
   base: './', 
-  
   plugins: [
     react(), 
     VitePWA({
@@ -15,25 +12,23 @@ export default defineConfig({
       devOptions: {
         enabled: true
       },
-      // 1. Add your new filename here so Vite processes it
-      includeAssets: [ 'apple-touch-icon.png', 'Meme Archive Logo.png'],
-      
+      // 1. Point to the new simple filename
+      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'logo.png'],
       manifest: {
         name: 'Meme Archive',
         short_name: 'MemeArchive',
         description: 'Aplikasi sederhana untuk mengarsipkan meme favorit.',
         theme_color: '#ffffff',
-        
-        // 2. This is the section that was missing/empty in your file
+        // 2. Update icons to use logo.png
         icons: [
           {
-            src: 'Meme Archive Logo.png',
+            src: 'logo.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: 'Meme Archive Logo.png',
+            src: 'logo.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
