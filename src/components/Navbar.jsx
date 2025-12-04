@@ -11,10 +11,18 @@ export default function Navbar({ setCurrentPage, currentPage }) {
     }`;
 
   return (
-    <nav className="hidden md:block w-full bg-white shadow-sm px-4 md:px-10 py-3 fixed top-0 z-40"> {/* ← Added hidden md:block */}
+    // Note: 'hidden md:block' hides this top navbar on mobile (likely because you use BottomNav on mobile)
+    <nav className="hidden md:block w-full bg-white shadow-sm px-4 md:px-10 py-3 fixed top-0 z-40"> 
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-500 rounded-lg flex-shrink-0" />
+          {/* --- LOGO CHANGE START --- */}
+          <img 
+            src="/Meme Archive Logo.png" 
+            alt="Meme Archive Logo" 
+            className="w-8 h-8 object-contain" 
+          />
+          {/* --- LOGO CHANGE END --- */}
+          
           <h1 className="text-lg md:text-xl font-semibold">
             Meme <span className="text-blue-500">Archive</span>
           </h1>
